@@ -2,6 +2,8 @@ var g_playlist = null;
 var g_previous = [];
 var g_previous_idx = 0;
 var g_looping = false;
+var g_shuffle = true;
+var g_current_track = null;
 var MAX_HISTORY = 10;
 
 var scrubp = 0;
@@ -85,24 +87,41 @@ function playPreviousTrack () {
     if (g_playlist === null)
         return;
 
-    if (g_previous_idx <= 0)
-        g_previous_idx = 0;
-    else
-        g_previous_idx -= 1;
+    if (g_shuffle) {
+        if (g_previous_idx <= 0)
+            g_previous_idx = 0;
+        else
+            g_previous_idx -= 1;
+    } else {
+        if (g_previous[g_previous_idx] <= 0) {
+            g_previous[g_previous_idx] = g_playlist.length - 1;
+        } else {
+            g_previous[g_previous_idx] -= 1;
+        }
+    }
 
     playTrack (g_previous[g_previous_idx]);
 }
 
-function playNextTrack () {
+function playNextTrack (trackId) {
     if (g_playlist === null)
-        return;
+            return;
 
-    if (g_previous_idx >= (g_previous.length - 1)) {
-        g_previous.push (Math.floor (Math.random () * g_playlist.length));
-        g_previous_idx = g_previous.length - 1;
-    }
-    else {
-        g_previous_idx += 1;
+    if (g_shuffle) {
+        if (g_previous_idx >= (g_previous.length - 1)) {
+            g_previous.push (trackId || Math.floor (Math.random () * g_playlist.length));
+            g_previous_idx = g_previous.length - 1;
+        } else {
+            g_previous_idx += 1;
+        }
+    } else {
+        if (trackId !== undefined) {
+            g_previous[g_previous_idx] = trackId;
+        } else if (g_previous[g_previous_idx] >= g_playlist.length - 1) {
+            g_previous[g_previous_idx] = 0;
+        } else {
+            g_previous[g_previous_idx] += 1;
+        }
     }
 
     while (g_previous.length > MAX_HISTORY) {
@@ -113,7 +132,6 @@ function playNextTrack () {
     playTrack (g_previous[g_previous_idx]);
 }
 
-
 function playTrack (trackid) {
     var track = g_playlist[trackid];
 
@@ -121,7 +139,7 @@ function playTrack (trackid) {
     var trackelem = $('#tracks-table div').eq (trackid);
     trackelem.addClass ('selected');
 
-    window.location.hash = createTrackId (track);
+    //window.location.hash = createTrackId (track);
     $('audio').attr ('src', track.location);
     $('audio').trigger ('play');
 
@@ -160,7 +178,7 @@ function loadNewPlaylist (playlist, track) {
                 row.appendTo ('#tracks-table');
                 (function (i) {
                     row.click (function () {
-                        playTrack (i);
+                        playNextTrack(i);
                     });
                 }) (i);
             }
@@ -191,6 +209,13 @@ function toggleLooping () {
     $('audio').attr ('loop', g_looping);
     $('#btn-loop i').toggleClass('fa-times', g_looping);
     $('#btn-loop i').toggleClass('fa-repeat', !g_looping);
+}
+
+function toggleShuffle () {
+    g_shuffle = !g_shuffle;
+    g_previous = [g_previous[g_previous_idx]];
+    g_previous_idx = 0;
+    $('#btn-shuffle i').toggleClass('icon-off');
 }
 
 function populatePlaylistOptions () {
@@ -267,7 +292,7 @@ $(function () {
     });
 
     $('#btn-next').click (function () {
-        playNextTrack (true);
+        playNextTrack ();
     });
 
     $('#btn-previous').click (function () {
@@ -276,6 +301,10 @@ $(function () {
 
     $('#btn-loop').click (function () {
         toggleLooping ();
+    });
+
+    $('#btn-shuffle').click (function () {
+        toggleShuffle ();
     });
 
     $('#select-playlist').on ('change', function () {
