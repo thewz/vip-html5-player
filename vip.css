@@ -67,6 +67,11 @@ body {
     color: #183c63;
 }
 
+.yt-player {
+    height: 0;
+    width: 0;
+}
+
 .control-bar {
     position: fixed;
     top: 0;
