@@ -110,6 +110,8 @@ function parsePlaylist (playlistXML) {
             location: $(this).find ('location').text ()
         };
 
+        track.location = track.location.replace("http:", "https:");
+
         result.push (track);
     });
 
