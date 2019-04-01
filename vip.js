@@ -365,6 +365,10 @@ function startPlayer() {
         toggleShuffle ();
     });
 
+    $('#btn-share').click (function () {
+        window.location.hash = createTrackId (g_playlist[g_previous[g_previous_idx]]);
+    });
+
     $('#select-playlist').on ('change', function () {
         var playlist = $('#select-playlist').val ();
         loadNewPlaylist (playlist, '');
