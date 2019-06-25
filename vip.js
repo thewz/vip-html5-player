@@ -11,12 +11,12 @@ var scrubp = 0;
 var is_dragging_scrubber = false;
 
 var PLAYLISTS = {
-    'VIP': 'http://vip.aersia.net/roster.xml',
-    'Mellow': 'http://vip.aersia.net/roster-mellow.xml',
-    'Source': 'http://vip.aersia.net/roster-source.xml',
-    'Exiled': 'http://vip.aersia.net/roster-exiled.xml',
-    'WAP': 'http://wap.aersia.net/roster.xml',
-    'CPP': 'http://cpp.aersia.net/roster.xml',
+    'VIP': 'https://vip.aersia.net/roster.xml',
+    'Mellow': 'https://vip.aersia.net/roster-mellow.xml',
+    'Source': 'https://vip.aersia.net/roster-source.xml',
+    'Exiled': 'https://vip.aersia.net/roster-exiled.xml',
+    'WAP': 'https://wap.aersia.net/roster.xml',
+    'CPP': 'https://cpp.aersia.net/roster.xml',
 };
 
 var DEFAULT_PLAYLIST = 'VIP';
@@ -109,6 +109,8 @@ function parsePlaylist (playlistXML) {
             title: $(this).find ('title').text (),
             location: $(this).find ('location').text ()
         };
+
+        track.location = track.location.replace("http:", "https:");
 
         result.push (track);
     });
