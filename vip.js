@@ -393,6 +393,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function setUpMediaKeys() {
   if ('mediaSession' in navigator) {
+    console.log('Adding media keys');
     navigator.mediaSession.setActionHandler('play', function() {
       console.log("Play");
       playpause(); 
